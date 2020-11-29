@@ -124,6 +124,7 @@
 =>
     (modify ?board (remaining-bomb (- ?b 1)))
     (modify ?adj-square (is-flag 1))
+    (printout t "bomb in (" ?x2 ", " ?y2 ") " crlf)
 )
 
 (defrule subtract-flagged-box

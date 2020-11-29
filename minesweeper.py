@@ -1,4 +1,4 @@
-
+from clipspy import ClipsMinesweeper
 
 class Minesweeper():
     def __init__(self, size, num_bombs):
@@ -37,9 +37,9 @@ class Minesweeper():
                         rows.append(row+1)
                     for x in cols:
                         for y in rows:
-                            if self.board_state[y][x] == -1:
+                            if self.board_state[x][y] == -1:
                                 numMines = numMines + 1
-                    self.board_state[row][col] = numMines
+                    self.board_state[col][row] = numMines
 
     def input_bombs(self):
         for i in range(self.count_bombs):
@@ -58,6 +58,12 @@ class Minesweeper():
             print()
 
 if __name__ == "__main__":
-    ms = Minesweeper(10,3)
+    size = int(input('Input size board : '))
+    num_bombs = int(input('Input number of bombs : '))
+    ms = Minesweeper(size, num_bombs)
     ms.print_board()
-    
+
+    clips = ClipsMinesweeper()
+    clips.load_board(size, num_bombs)
+    clips.load_square(ms.board_state)
+    clips.print_facts()
