@@ -295,10 +295,21 @@ class Board(QMainWindow):
 
 
 if __name__ == '__main__':
+    _file = open('gameconfig.txt', 'r')
+    arr_bombs = []
+    i = 0
+    for f in _file:
+        if i == 0:
+            boardsize = int(f)
+        elif i == 1:
+            n_bombs = int(f)
+        else:
+            arr_bombs.append(tuple(f.split(',')))
+        i += 1
+
+    for i in range (len(arr_bombs)):
+        arr_bombs[i] = (int(arr_bombs[i][0]), int(arr_bombs[i][1]))
+    
     app = QApplication([])
-    arr_bombs = [(0,1), (1,1), (2,3), (3,3), (4,4)]
-    print(arr_bombs)
-    for i in arr_bombs:
-        print(i)
-    window = Board(5, 5, arr_bombs)
+    window = Board(boardsize, n_bombs, arr_bombs)
     app.exec_()
