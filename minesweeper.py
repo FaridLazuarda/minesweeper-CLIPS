@@ -1,4 +1,5 @@
 from clipspy import ClipsMinesweeper
+from gui import *
 
 class Minesweeper():
     def __init__(self, size, num_bombs):
@@ -67,3 +68,7 @@ if __name__ == "__main__":
     clips.load_board(size, num_bombs)
     clips.load_square(ms.board_state)
     clips.print_facts()
+
+    app = QApplication([])
+    window = Board(size, num_bombs, ms.bomb_coords)
+    app.exec_()
