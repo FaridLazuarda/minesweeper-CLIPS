@@ -203,8 +203,6 @@ class Board(QMainWindow):
             template_board = self.clips.environment.find_template('board')
 
             for fact in facts :
-            
-                # print(fact)
                 if fact.template == template_square: 
                     x = fact['x']
                     y = fact['y']
@@ -218,7 +216,7 @@ class Board(QMainWindow):
                         run = False
                         break
             
-            print(i)
+            # print(i)
             i += 1
             
             
@@ -230,7 +228,7 @@ class Board(QMainWindow):
         for x in range(0, self.board_size):
             for y in range(0, self.board_size):
                 w = Box(x, y)
-                self.arr_box[x][y] = w
+                self.arr_box[y][x] = w
                 self.grid.addWidget(w, y, x)
                 # Connect signal to handle expansion.
                 w.click_signal.connect(self.trigger_click)
