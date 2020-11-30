@@ -204,6 +204,10 @@ class Board(QMainWindow):
         while run :
             facts = self.clips.run_one_step()
             # self.clips.environment.run()
+            if not self.clips.environment.agenda_changed:
+                run = False
+                break
+
             template_square = self.clips.environment.find_template('square')
             template_board = self.clips.environment.find_template('board')
 
@@ -231,7 +235,7 @@ class Board(QMainWindow):
             # print(i)
             i += 1
             # print(i)
-
+        print('Stop game')
 
     def init_map(self):
         # Add positions to the map

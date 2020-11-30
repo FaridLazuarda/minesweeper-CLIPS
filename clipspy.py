@@ -1,8 +1,8 @@
 from clips import Environment, Symbol
-
 class ClipsMinesweeper():
     def __init__(self):
         self.environment = Environment()
+        
 
         # load constructs into the environment
         self.environment.load('minesweeper.clp')
