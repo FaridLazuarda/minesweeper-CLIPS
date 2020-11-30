@@ -217,13 +217,16 @@ class Board(QMainWindow):
                     y = fact['y']
                     if fact['is-open']:
                         if not self.done_open[x][y] :
+                            if fact['value'] == -1 :
+                                run = False
+                                break
                             self.arr_box[x][y].open()
                             self.done_open[x][y] = True
                             time.sleep(0.5)
                         
                     if fact['is-flag']:
-                        print(self.arr_box[x][y].x, ' ini arr box x nya')
                         if not self.done[x][y] :
+                            print(x, y, 'ini bom nya')
                             self.arr_box[x][y].flag()
                             self.done[x][y] = True
                             time.sleep(0.5)

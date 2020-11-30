@@ -405,6 +405,54 @@
     (modify ?adj-square (is-open 1))
 )
 
+(defrule random-open-0
+    (declare (salience -1000))
+    ?random-square <- (square (is-open 0) (is-flag 0) (x ?x1) (y ?y1))
+    ?board-state <- (board (size ?sz))
+    (test (= 0 ?x1))
+    (test (= 0 ?y1))
+=>
+    (modify ?random-square (is-open 1))
+)
+
+(defrule random-open-1
+    (declare (salience -1000))
+    ?random-square <- (square (is-open 0) (is-flag 0) (x ?x1) (y ?y1))
+    ?board-state <- (board (size ?sz))
+    (test (= (- ?sz 1) ?x1))
+    (test (= 0 ?y1))
+=>
+    (modify ?random-square (is-open 1))
+)
+
+(defrule random-open-2
+    (declare (salience -1000))
+    ?random-square <- (square (is-open 0) (is-flag 0) (x ?x1) (y ?y1))
+    ?board-state <- (board (size ?sz))
+    (test (= (- ?sz 1) ?x1))
+    (test (= (- ?sz 1) ?y1))
+=>
+    (modify ?random-square (is-open 1))
+)
+
+(defrule random-open-3
+    (declare (salience -1000))
+    ?random-square <- (square (is-open 0) (is-flag 0) (x ?x1) (y ?y1))
+    ?board-state <- (board (size ?sz))
+    (test (= 0 ?x1))
+    (test (= (- ?sz 1) ?y1))
+=>
+    (modify ?random-square (is-open 1))
+)
+
+(defrule random-open-4
+    (declare (salience -1100))
+    ?random-square <- (square (is-open 0) (is-flag 0) (x ?x1) (y ?y1))
+=>
+    (modify ?random-square (is-open 1))
+)
+
+
 ; (defrule 1-2-1-patten
 
 ; )
