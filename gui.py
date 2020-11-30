@@ -2,6 +2,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
+import sys
 import time
 
 IMG_BOMB = QImage("./img/bomb.png")
@@ -30,7 +31,6 @@ class Box(QWidget):
     expand_signal = pyqtSignal(int, int)
     click_signal = pyqtSignal()
     ko_signal = pyqtSignal()
-    win_signal = pyqtSignal()
 
     def __init__(self, x, y, *args, **kwargs):
         super(Box, self).__init__(*args, **kwargs)
@@ -109,9 +109,6 @@ class Box(QWidget):
     def mouseReleaseEvent(self, e):
         if (e.button() == Qt.RightButton and not self.is_clicked):
             self.flag()
-            # check win condition
-            # num of flag equals to num of bomb
-            # and flag(s) are placed correctly
 
         elif (e.button() == Qt.LeftButton):
             self.click()
@@ -196,10 +193,9 @@ class Board(QMainWindow):
                 w = Box(x, y)
                 self.grid.addWidget(w, y, x)
                 # Connect signal to handle expansion.
-                w.click_signal.connect(self.trigger_start)
+                w.click_signal.connect(self.trigger_click)
                 w.expand_signal.connect(self.expand_reveal)
                 w.ko_signal.connect(self.game_over)
-                w.win_signal.connect(self.game_win)
 
     def reset_map(self):
         # Clear all bomb positions
@@ -258,7 +254,10 @@ class Board(QMainWindow):
         for x in range(0, self.board_size):
             for y in range(0, self.board_size):
                 w = self.grid.itemAtPosition(y, x).widget()
-                w.open()
+                if (self.status == STATUS_SUCCESS and w.is_bomb):
+                    pass
+                else:
+                    w.open()
 
     def expand_reveal(self, x, y):
         for xi in range(max(0, x - 1), min(x + 2, self.board_size)):
@@ -267,12 +266,22 @@ class Board(QMainWindow):
                 if not w.is_bomb:
                     w.click()
 
-    def trigger_start(self, *args):
-        if self.status != STATUS_PLAYING:
+    def trigger_click(self, *args):
+        if self.status == STATUS_READY:
             # First click
             self.update_status(STATUS_PLAYING)
             # Start timer
             self._timer_start_nsecs = int(time.time())
+        elif self.status == STATUS_PLAYING and (self.is_win()):
+            self.game_win()
+
+    def is_win(self):
+        win = True
+        for b in self.arr_bombs:
+            w = self.grid.itemAtPosition(b[1], b[0]).widget()
+            if (not w.is_flagged):
+                win = False
+        return win
 
     def update_status(self, status):
         self.status = status
@@ -287,15 +296,20 @@ class Board(QMainWindow):
             self.clock.setText("%02d" % n_secs)
 
     def game_over(self):
-        self.reveal_map()
         self.update_status(STATUS_FAILED)
+        self.reveal_map()
 
     def game_win(self):
         self.update_status(STATUS_SUCCESS)
+        self.reveal_map()
 
 
 if __name__ == '__main__':
-    _file = open('gameconfig.txt', 'r')
+    try:
+        _filename = sys.argv[1]
+    except:
+        _filename = input('Input your game config file: ')
+        _file = open(_filename, 'r')
     arr_bombs = []
     i = 0
     for f in _file:
