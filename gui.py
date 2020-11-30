@@ -1,6 +1,8 @@
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+from clipspy import *
+from concurrent.futures import *
 
 import time
 
@@ -120,12 +122,14 @@ class Box(QWidget):
 
 
 class Board(QMainWindow):
-    def __init__(self, board_size, n_bombs, arr_bombs, *args, **kwargs):
+    def __init__(self, board_size, n_bombs, arr_bombs, clips, *args, **kwargs):
         super(Board, self).__init__(*args, **kwargs)
 
         self.board_size = board_size
         self.n_bombs = n_bombs
         self.arr_bombs = arr_bombs
+        self.clips = clips
+        self.arr_box = [[0 for i in range(board_size)] for j in range(board_size)]
 
         w = QWidget()
         hb = QHBoxLayout()
@@ -188,12 +192,44 @@ class Board(QMainWindow):
         self.update_status(STATUS_READY)
 
         self.show()
+        # executor = ThreadPoolExecutor()
+        # executor.submit(self.play)
+        # self.play()
+
+    def play(self):
+        i = 0
+        while True :
+            # facts = self.clips.run_one_step()
+            self.clips.environment.run()
+            template_square = self.clips.environment.find_template('square')
+            template_board = self.clips.environment.find_template('board')
+            for fact in self.clips.environment.facts() :
+            
+                # print(fact)
+                if fact.template == template_square: 
+                    x = fact['x']
+                    y = fact['y']
+                    if fact['is-open']:
+                        self.arr_box[x][y].open()
+                    if fact['is-flag']:
+                        self.arr_box[x][y].flag()
+                elif fact.template == template_board:
+                    if fact['remaining-bomb'] == 0:
+                        break
+            
+            print(i)
+            i += 1
+            
+            
+            # time.sleep(1)
+
 
     def init_map(self):
         # Add positions to the map
         for x in range(0, self.board_size):
             for y in range(0, self.board_size):
                 w = Box(x, y)
+                self.arr_box[x][y] = w
                 self.grid.addWidget(w, y, x)
                 # Connect signal to handle expansion.
                 w.click_signal.connect(self.trigger_start)

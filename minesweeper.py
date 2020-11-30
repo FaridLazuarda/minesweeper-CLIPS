@@ -65,10 +65,25 @@ if __name__ == "__main__":
     ms.print_board()
 
     clips = ClipsMinesweeper()
+    clips.environment.reset()
     clips.load_board(size, num_bombs)
     clips.load_square(ms.board_state)
-    clips.print_facts()
+    # clips.print_facts()
+
+    
+    # clips.environment.run()
+    # clips.print_facts()
+    # while True :
+    #     clips.environment.run(limit=1)
+    #     a = input('next ? ')
+    #     i=0
+    #     for fact in clips.environment.facts():
+    #         template_square = clips.environment.find_template('square')
+    #         print(i, fact)
+    #         if fact.template == template_square: 
+    #             print(fact['x'], ' ', fact['y'])
+    #         i += 1
 
     app = QApplication([])
-    window = Board(size, num_bombs, ms.bomb_coords)
+    window = Board(size, num_bombs, ms.bomb_coords, clips)
     app.exec_()

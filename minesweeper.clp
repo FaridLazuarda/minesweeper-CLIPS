@@ -168,18 +168,18 @@
 ; K | 3 | B
 ; 1 | B | K
 
-(deffacts initial-dummy ; Solved by 28 November 2020 14.00
-    (board (size 3) (remaining-bomb 4))
-    (square (x 0) (y 0) (value 0) (closed-square-around 3))
-    (square (x 0) (y 1) (value 2) (closed-square-around 5))
-    (square (x 0) (y 2) (value -1) (closed-square-around 3))
-    (square (x 1) (y 0) (value 2) (closed-square-around 5))
-    (square (x 1) (y 1) (value 4) (closed-square-around 8))
-    (square (x 1) (y 2) (value -1) (closed-square-around 5))
-    (square (x 2) (y 0) (value -1) (closed-square-around 3))
-    (square (x 2) (y 1) (value -1) (closed-square-around 5))
-    (square (x 2) (y 2) (value 2) (closed-square-around 3))
-)
+;(deffacts initial-dummy ; Solved by 28 November 2020 14.00
+;    (board (size 3) (remaining-bomb 4))
+;    (square (x 0) (y 0) (value 0) (closed-square-around 3))
+;    (square (x 0) (y 1) (value 2) (closed-square-around 5))
+;    (square (x 0) (y 2) (value -1) (closed-square-around 3))
+;    (square (x 1) (y 0) (value 2) (closed-square-around 5))
+;    (square (x 1) (y 1) (value 4) (closed-square-around 8))
+;    (square (x 1) (y 2) (value -1) (closed-square-around 5))
+;    (square (x 2) (y 0) (value -1) (closed-square-around 3))
+;    (square (x 2) (y 1) (value -1) (closed-square-around 5))
+;    (square (x 2) (y 2) (value 2) (closed-square-around 3))
+;)
 
 ; K | 1 | B
 ; K | 2 | 2
