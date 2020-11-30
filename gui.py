@@ -153,7 +153,7 @@ class Board(QMainWindow):
         self.button = QPushButton()
         self.button.setFixedSize(QSize(50, 50))
         self.button.setIconSize(QSize(50, 50))
-        self.button.setIcon(QIcon("./img/smiley.png"))
+        self.button.setIcon(QIcon(STATUS_ICONS[0]))
         self.button.setFlat(True)
 
         self.button.pressed.connect(self.button_pressed)
