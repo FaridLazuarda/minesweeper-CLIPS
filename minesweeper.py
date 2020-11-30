@@ -59,11 +59,8 @@ class Minesweeper():
             print()
 
 if __name__ == "__main__":
-    try:
-        _filename = sys.argv[1]
-    except:
-        _filename = input('Input your game config file: ')
-        _file = open(_filename, 'r')
+    _filename = input('Input your game config file: ')
+    _file = open(_filename, 'r')
     arr_bombs = []
     i = 0
     for f in _file:
