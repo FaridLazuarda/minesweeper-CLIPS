@@ -191,16 +191,18 @@ class Board(QMainWindow):
         self.show()
         # executor = ThreadPoolExecutor()
         # executor.submit(self.play)
-        # self.play()
+        self.play()
 
     def play(self):
         i = 0
-        while True :
-            # facts = self.clips.run_one_step()
+        run = True
+        while run :
+            facts = self.clips.run_one_step()
             self.clips.environment.run()
             template_square = self.clips.environment.find_template('square')
             template_board = self.clips.environment.find_template('board')
-            for fact in self.clips.environment.facts() :
+
+            for fact in facts :
             
                 # print(fact)
                 if fact.template == template_square: 
@@ -209,9 +211,11 @@ class Board(QMainWindow):
                     if fact['is-open']:
                         self.arr_box[x][y].open()
                     if fact['is-flag']:
+                        print(self.arr_box[x][y].x, ' ini arr box x nya')
                         self.arr_box[x][y].flag()
                 elif fact.template == template_board:
                     if fact['remaining-bomb'] == 0:
+                        run = False
                         break
             
             print(i)
