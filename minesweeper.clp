@@ -88,6 +88,20 @@
     (return 0)
 )
 
+(deffunction is-one-line-4 (?x1 ?x2 ?x3 ?x4 ?y1 ?y2 ?y3 ?y4)
+    (if (and (= ?x1 ?x2) (= ?y2 (+ ?y1 1)))
+        then
+        (if (and (= ?x2 ?x3) (= ?y3 (+ ?y2 1)))
+            then 
+            (if (and (= ?x3 ?x4) (= ?y4 (+ ?y3 1)))
+                then (return 1)
+            )
+        )
+    )
+
+    (return 0)
+)
+
 (deffunction different-square(?x1 ?y1 ?x2 ?y2)
     (if (or (!= ?x1 ?x2) (!= ?y1 ?y2))
         then (return 1)
@@ -119,6 +133,44 @@
                 (if (and (= ?x3 (- ?x6 1)) (= ?y3 ?y6))
                     then
                     (return 1)
+                )
+            )
+        )
+    )
+
+    (return 0)
+)
+
+(deffunction is-1-2-2-1 (?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8)
+    (if (= 1 (is-one-line-4 ?x1 ?x2 ?x3 ?x4 ?y1 ?y2 ?y3 ?y4))
+        then
+        (if (and (= ?x1 (+ ?x5 1)) (= ?y1 ?y5))
+            then
+            (if (and (= ?x2 (+ ?x6 1)) (= ?y2 ?y6))
+                then
+                (if (and (= ?x3 (+ ?x7 1)) (= ?y3 ?y7))
+                    then
+                    (if (and (= ?x4 (+ ?x8 1)) (= ?y4 ?y8))
+                        then
+                        (return 1)
+                    )
+                )
+            )
+        )
+    )
+
+    (if (= 1 (is-one-line-4 ?x1 ?x2 ?x3 ?x4 ?y1 ?y2 ?y3 ?y4))
+        then
+        (if (and (= ?x1 (- ?x5 1)) (= ?y1 ?y5))
+            then
+            (if (and (= ?x2 (- ?x6 1)) (= ?y2 ?y6))
+                then
+                (if (and (= ?x3 (- ?x7 1)) (= ?y3 ?y7))
+                    then
+                    (if (and (= ?x4 (- ?x8 1)) (= ?y4 ?y8))
+                        then
+                        (return 1)
+                    )
                 )
             )
         )
@@ -160,6 +212,47 @@
     (modify ?square5 (is-open 1))
     (modify ?square6 (is-flag 1))
     (printout t "Used 1-2-1 rule" crlf)
+)
+
+(defrule 1-2-2-1-pattern
+    ?square1 <- (square (is-open 1) (x ?x1) (y ?y1) (value ?v1) (flagged-square-around ?f1))
+    ?square2 <- (square (is-open 1) (x ?x2) (y ?y2) (value ?v2) (flagged-square-around ?f2))
+    ?square3 <- (square (is-open 1) (x ?x3) (y ?y3) (value ?v3) (flagged-square-around ?f3))
+    ?square4 <- (square (is-open 1) (x ?x4) (y ?y4) (value ?v4) (flagged-square-around ?f4))
+    
+    ; Apakah mereka semua beda square
+    (test (= 1 (different-square ?x1 ?y1 ?x2 ?y2)))
+    (test (= 1 (different-square ?x1 ?y1 ?x3 ?y3)))
+    (test (= 1 (different-square ?x1 ?y1 ?x4 ?y4)))
+    (test (= 1 (different-square ?x2 ?y2 ?x3 ?y3)))
+    (test (= 1 (different-square ?x2 ?y2 ?x4 ?y4)))
+    (test (= 1 (different-square ?x3 ?y3 ?x4 ?y4)))
+
+    ; Apakah jumlah bom yang tersisa samadengan 121
+    (test (= 1 (- ?v1 ?f1)))
+    (test (= 2 (- ?v2 ?f2)))
+    (test (= 2 (- ?v3 ?f3)))
+    (test (= 1 (- ?v4 ?f4)))
+
+    ; Square yang mau dicek di depannya
+    ?square5 <- (square (is-open 0) (x ?x5) (y ?y5) (is-flag 0))
+    ?square6 <- (square (is-open 0) (x ?x6) (y ?y6) (is-flag 0))
+    ?square7 <- (square (is-open 0) (x ?x7) (y ?y7) (is-flag 0))
+    ?square8 <- (square (is-open 0) (x ?x8) (y ?y8) (is-flag 0))
+    
+    ; Apakah memenuhi fungsi 1-2-2-1 nya
+    (test 
+        (or 
+            ; 1-2-2-1 horizontal
+            (= 1 (is-1-2-2-1 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8)) 
+            ; 1-2-2-1 vertikal
+            (= 1 (is-1-2-2-1 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8))))
+    
+
+=>
+    (modify ?square5 (is-flag 1))
+    (modify ?square6 (is-flag 1))
+    (printout t "Used 1-2-2-1 rule" crlf)
 )
 
 (defrule initialize ; Start program
