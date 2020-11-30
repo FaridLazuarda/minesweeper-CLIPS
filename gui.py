@@ -192,6 +192,9 @@ class Board(QMainWindow):
         self.show()
         t1 = threading.Thread(target=self.play)
         t1.start()
+
+        self.done = [[False for i in range(board_size)] for j in range(board_size)]
+        self.done_open = [[False for i in range(board_size)] for j in range(board_size)]
         # self.play()
 
     def play(self):
@@ -209,10 +212,18 @@ class Board(QMainWindow):
                     x = fact['x']
                     y = fact['y']
                     if fact['is-open']:
-                        self.arr_box[x][y].open()
+                        if not self.done_open[x][y] :
+                            self.arr_box[x][y].open()
+                            self.done_open[x][y] = True
+                            time.sleep(0.5)
+                        
                     if fact['is-flag']:
                         print(self.arr_box[x][y].x, ' ini arr box x nya')
-                        self.arr_box[x][y].flag()
+                        if not self.done[x][y] :
+                            self.arr_box[x][y].flag()
+                            self.done[x][y] = True
+                            time.sleep(0.5)
+                        
                 elif fact.template == template_board:
                     if fact['remaining-bomb'] == 0:
                         run = False
@@ -220,7 +231,6 @@ class Board(QMainWindow):
             # print(i)
             i += 1
             # print(i)
-            time.sleep(0.1)
 
 
     def init_map(self):
