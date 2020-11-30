@@ -257,6 +257,48 @@
     (printout t "Used 1-2-2-1 rule" crlf)
 )
 
+
+; K | K | K
+; 1 | 1 | K
+; K | -1 | K
+
+(defrule 1-1-pattern
+    ; 
+    ?square1 <- (square (is-open 1) (x ?x1) (y ?y1) (value ?v1) (flagged-square-around ?f1) (closed-square-around ?c1))
+    ?square2 <- (square (is-open 1) (x ?x2) (y ?y2) (value ?v2) (flagged-square-around ?f2) (closed-square-around ?c2))
+    ?square3 <- (square (is-open 1) (x ?x3) (y ?y3) (value ?v3) (flagged-square-around ?f3) (closed-square-around ?c3))
+    
+    ; Apakah mereka semua beda square
+    (test (= 1 (different-square ?x1 ?y1 ?x2 ?y2)))
+    (test (= 1 (different-square ?x1 ?y1 ?x3 ?y3)))
+    (test (= 1 (different-square ?x2 ?y2 ?x3 ?y3)))
+
+    ; Apakah jumlah bom yang tersisa samadengan 11
+    (test (= 1 (- ?v1 ?f1)))
+    (test (= 1 (- ?v2 ?f2)))
+
+    ; Square yang mau dicek di depannya
+    ?square4 <- (square (is-open 0) (x ?x4) (y ?y4) (is-flag 0))
+    ?square5 <- (square (is-open 0) (x ?x5) (y ?y5) (is-flag 0))
+    ?square6 <- (square (is-open 0) (x ?x6) (y ?y6) (is-flag 0))
+
+    ; jumlah kotak yang ketutup dan belom diflag harus 2 (close-square-around - flag-square-around)
+    (test (= 2 (- ?c1 ?f1)))
+    (test (= 3 (- ?c2 ?f2)))
+
+    ; ; Apakah memenuhi fungsi 1-2-1 nya
+    (test 
+        (or 
+            ; 1-2-1 horizontal
+            (= 1 (is-1-2-1 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6)) 
+            ; 1-2-1 vertikal
+            (= 1 (is-1-2-1 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6))))
+
+=>
+    (modify ?square6 (is-open 1))
+    (printout t "Used 1-1 rule" crlf)
+)
+
 (defrule initialize ; Start program
     ?init <- (square (is-open 0) (x 0) (y 0))
 =>
@@ -372,6 +414,23 @@
 ; K -> Kosong
 ; B -> Bo
 
+; K | 1 | 1
+; K | 1 | -1
+; K | 1 | 1
+
+; (deffacts initial-dummy-0 
+;     (board (size 3) (remaining-bomb 1))
+;     (square (x 0) (y 0) (value 0) (closed-square-around 3))
+;     (square (x 1) (y 0) (value 0) (closed-square-around 5))
+;     (square (x 2) (y 0) (value 0) (closed-square-around 3))
+;     (square (x 0) (y 1) (value 1) (closed-square-around 5))
+;     (square (x 1) (y 1) (value 1) (closed-square-around 8))
+;     (square (x 2) (y 1) (value 1) (closed-square-around 5))
+;     (square (x 0) (y 2) (value 1) (closed-square-around 3))
+;     (square (x 1) (y 2) (value -1) (closed-square-around 5))
+;     (square (x 2) (y 2) (value 1) (closed-square-around 3))
+; )
+
 ; K | 2 | B
 ; K | 3 | B
 ; 1 | B | K
@@ -393,26 +452,26 @@
 ; K | 2 | 2
 ; K | 1 | B
 
-(deffacts initial-dummy-2
-    (board (size 3) (remaining-bomb 2))
-    (square (x 0) (y 0) (value 0) (closed-square-around 3))
+; (deffacts initial-dummy-2
+;     (board (size 3) (remaining-bomb 2))
+;     (square (x 0) (y 0) (value 0) (closed-square-around 3))
 
-    (square (x 0) (y 1) (value 1) (closed-square-around 5))
+;     (square (x 0) (y 1) (value 1) (closed-square-around 5))
 
-    (square (x 0) (y 2) (value -1) (closed-square-around 3))
+;     (square (x 0) (y 2) (value -1) (closed-square-around 3))
 
-    (square (x 1) (y 0) (value 0) (closed-square-around 5))
+;     (square (x 1) (y 0) (value 0) (closed-square-around 5))
 
-    (square (x 1) (y 1) (value 2) (closed-square-around 8))
+;     (square (x 1) (y 1) (value 2) (closed-square-around 8))
 
-    (square (x 1) (y 2) (value 2) (closed-square-around 5))
+;     (square (x 1) (y 2) (value 2) (closed-square-around 5))
 
-    (square (x 2) (y 0) (value 0) (closed-square-around 3))
+;     (square (x 2) (y 0) (value 0) (closed-square-around 3))
 
-    (square (x 2) (y 1) (value 1) (closed-square-around 5))
+;     (square (x 2) (y 1) (value 1) (closed-square-around 5))
 
-    (square (x 2) (y 2) (value -1) (closed-square-around 3))
-)
+;     (square (x 2) (y 2) (value -1) (closed-square-around 3))
+; )
 
 ; (deffacts initial-dummy-3
 ;     (board (size 2) (remaining-bomb 0))
