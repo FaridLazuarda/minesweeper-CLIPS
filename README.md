@@ -1,2 +1,2 @@
 # minesweeper-CLIPS
-Bikin minesweeper solver pake CLIPS+KBS 
+Bikin minesweeper solver pake CLIPS expert + Python 
