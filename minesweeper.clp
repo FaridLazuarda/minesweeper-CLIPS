@@ -393,26 +393,26 @@
 ; K | 2 | 2
 ; K | 1 | B
 
-(deffacts initial-dummy-2
-    (board (size 3) (remaining-bomb 2))
-    (square (x 0) (y 0) (value 0) (closed-square-around 3))
+; (deffacts initial-dummy-2
+;     (board (size 3) (remaining-bomb 2))
+;     (square (x 0) (y 0) (value 0) (closed-square-around 3))
 
-    (square (x 0) (y 1) (value 1) (closed-square-around 5))
+;     (square (x 0) (y 1) (value 1) (closed-square-around 5))
 
-    (square (x 0) (y 2) (value -1) (closed-square-around 3))
+;     (square (x 0) (y 2) (value -1) (closed-square-around 3))
 
-    (square (x 1) (y 0) (value 0) (closed-square-around 5))
+;     (square (x 1) (y 0) (value 0) (closed-square-around 5))
 
-    (square (x 1) (y 1) (value 2) (closed-square-around 8))
+;     (square (x 1) (y 1) (value 2) (closed-square-around 8))
 
-    (square (x 1) (y 2) (value 2) (closed-square-around 5))
+;     (square (x 1) (y 2) (value 2) (closed-square-around 5))
 
-    (square (x 2) (y 0) (value 0) (closed-square-around 3))
+;     (square (x 2) (y 0) (value 0) (closed-square-around 3))
 
-    (square (x 2) (y 1) (value 1) (closed-square-around 5))
+;     (square (x 2) (y 1) (value 1) (closed-square-around 5))
 
-    (square (x 2) (y 2) (value -1) (closed-square-around 3))
-)
+;     (square (x 2) (y 2) (value -1) (closed-square-around 3))
+; )
 
 ; (deffacts initial-dummy-3
 ;     (board (size 2) (remaining-bomb 0))

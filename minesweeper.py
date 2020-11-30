@@ -53,9 +53,9 @@ class Minesweeper():
             self.board_state[i][j] = -1
 
     def print_board(self):
-        for row in self.board_state:
-            for el in row:
-                print(el, end=" ")
+        for i in range(len(self.board_state)):
+            for j in range(len(self.board_state[i])):
+                print(self.board_state[j][i], end=" ")
             print()
 
 if __name__ == "__main__":
