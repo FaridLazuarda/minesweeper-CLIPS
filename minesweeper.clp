@@ -60,6 +60,82 @@
         (allowed-integers 0 1)
         (default 0)
     )
+
+    (slot bomb-subtracted-from-board
+        (type INTEGER)
+        (allowed-integers 0 1)
+        (default 0)
+    )
+)  
+
+; (deffacts initial-dummy-check-1-2-1 ; Buat Ngecek pattern 1-2-1
+;     (square (y 0) (x 0) (value 1) (closed-square-around 3) (is-open 1))
+;     (square (y 0) (x 1) (value 2) (closed-square-around 5) (is-open 1))
+;     (square (y 0) (x 2) (value 1) (closed-square-around 3) (is-open 1))
+;     (square (y 1) (x 0) (value -1) (closed-square-around 3) (is-open 0))
+;     (square (y 1) (x 1) (value -1) (closed-square-around 5) (is-open 0))
+;     (square (y 1) (x 2) (value -1) (closed-square-around 3) (is-open 0))
+; )
+
+(deffunction is-one-line-3 (?c1 ?c2 ?c3)
+    (if (= ?c1 ?c2)
+        then
+        (if (= ?c2 ?c3)
+            then (return 1)
+        )
+    )
+
+    (return 0)
+)
+
+(deffunction different-square(?x1 ?y1 ?x2 ?y2)
+    (if (or (!= ?x1 ?x2) (!= ?y1 ?y2))
+        then (return 1)
+    )
+    (return 0)
+)
+
+(deffunction is-1-2-1 (?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6)
+    (if (= 1 (is-one-line-3 ?x1 ?x2 ?x3))
+        then
+        (if (and (or (= ?x1 (+ ?x4 1)) (= ?x1 (- ?x4 1))) (= ?y1 ?y4))
+            then
+            (if (and (or (= ?x2 (+ ?x5 1)) (= ?x2 (- ?x5 1))) (= ?y2 ?y5))
+                then
+                (if (and (or (= ?x3 (+ ?x6 1)) (= ?x3 (- ?x6 1))) (= ?y3 ?y6))
+                    then
+                    (return 1)
+                )
+            )
+        )
+    )
+
+    (return 0)
+)
+
+(defrule 1-2-1-pattern
+    ?square1 <- (square (is-open 1) (x ?x1) (y ?y1) (value ?v1) (flagged-square-around ?f1))
+    ?square2 <- (square (is-open 1) (x ?x2) (y ?y2) (value ?v2) (flagged-square-around ?f2))
+    ?square3 <- (square (is-open 1) (x ?x3) (y ?y3) (value ?v3) (flagged-square-around ?f3))
+    (test (= 1 (different-square ?x1 ?y1 ?x2 ?y2)))
+    (test (= 1 (different-square ?x1 ?y1 ?x3 ?y3)))
+    (test (= 1 (different-square ?x2 ?y2 ?x3 ?y3)))
+
+    (test (= 1 (- ?v1 ?f1)))
+    (test (= 2 (- ?v2 ?f2)))
+    (test (= 1 (- ?v3 ?f3)))
+    ?square4 <- (square (is-open 0) (x ?x4) (y ?y4) (is-flag 0))
+    ?square5 <- (square (is-open 0) (x ?x5) (y ?y5) (is-flag 0))
+    ?square6 <- (square (is-open 0) (x ?x6) (y ?y6) (is-flag 0))
+    
+    (test (or (= 1 (is-1-2-1 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6)) (= 1 (is-1-2-1 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6))))
+    
+
+=>
+    (modify ?square4 (is-flag 1))
+    (modify ?square5 (is-open 1))
+    (modify ?square6 (is-flag 1))
+    (printout t "Used 1-2-1 rule" crlf)
 )
 
 (defrule initialize ; Start program
@@ -76,6 +152,14 @@
 =>
     (printout t "Oops, wrong step! You lose!")
     (halt)
+)
+
+(defrule if-flagged
+    ?flagged-square <- (square (is-flag 1) (bomb-subtracted-from-board 0))
+    ?board <- (board (remaining-bomb ?b))
+=>
+    (modify ?flagged-square (bomb-subtracted-from-board 1))
+    (modify ?board (remaining-bomb (- ?b 1)))
 )
 
 
@@ -120,11 +204,11 @@
     ?adj-square <- (square (is-open 0) (is-flag 0) (x ?x2) (y ?y2))
     (test (>= 1 (abs (- ?x2 ?x1))))
     (test (>= 1 (abs (- ?y2 ?y1))))
-    ?board <- (board (remaining-bomb ?b))
+    ; ?board <- (board (remaining-bomb ?b))
 =>
-    (modify ?board (remaining-bomb (- ?b 1)))
+    ; (modify ?board (remaining-bomb (- ?b 1)))
     (modify ?adj-square (is-flag 1))
-    (printout t "bomb in (" ?x2 ", " ?y2 ") " crlf)
+    ; (printout t "bomb in (" ?x2 ", " ?y2 ") " crlf)
 )
 
 (defrule subtract-flagged-box
@@ -160,6 +244,11 @@
     (modify ?adj-square (is-open 1))
 )
 
+; (defrule 1-2-1-patten
+
+; )
+
+
 
 ; K -> Kosong
 ; B -> Bo
@@ -168,43 +257,43 @@
 ; K | 3 | B
 ; 1 | B | K
 
-(deffacts initial-dummy ; Solved by 28 November 2020 14.00
-    (board (size 3) (remaining-bomb 4))
-    (square (x 0) (y 0) (value 0) (closed-square-around 3))
-    (square (x 0) (y 1) (value 2) (closed-square-around 5))
-    (square (x 0) (y 2) (value -1) (closed-square-around 3))
-    (square (x 1) (y 0) (value 2) (closed-square-around 5))
-    (square (x 1) (y 1) (value 4) (closed-square-around 8))
-    (square (x 1) (y 2) (value -1) (closed-square-around 5))
-    (square (x 2) (y 0) (value -1) (closed-square-around 3))
-    (square (x 2) (y 1) (value -1) (closed-square-around 5))
-    (square (x 2) (y 2) (value 2) (closed-square-around 3))
-)
+; (deffacts initial-dummy ; Solved by 28 November 2020 14.00
+;     (board (size 3) (remaining-bomb 4))
+;     (square (x 0) (y 0) (value 0) (closed-square-around 3))
+;     (square (x 0) (y 1) (value 2) (closed-square-around 5))
+;     (square (x 0) (y 2) (value -1) (closed-square-around 3))
+;     (square (x 1) (y 0) (value 2) (closed-square-around 5))
+;     (square (x 1) (y 1) (value 4) (closed-square-around 8))
+;     (square (x 1) (y 2) (value -1) (closed-square-around 5))
+;     (square (x 2) (y 0) (value -1) (closed-square-around 3))
+;     (square (x 2) (y 1) (value -1) (closed-square-around 5))
+;     (square (x 2) (y 2) (value 2) (closed-square-around 3))
+; )
 
 ; K | 1 | B
 ; K | 2 | 2
 ; K | 1 | B
 
-; (deffacts initial-dummy-2
-;     (board (size 3) (remaining-bomb 3))
-;     (square (x 0) (y 0) (value 0) (closed-square-around 3))
+(deffacts initial-dummy-2
+    (board (size 3) (remaining-bomb 2))
+    (square (x 0) (y 0) (value 0) (closed-square-around 3))
 
-;     (square (x 0) (y 1) (value 1) (closed-square-around 5))
+    (square (x 0) (y 1) (value 1) (closed-square-around 5))
 
-;     (square (x 0) (y 2) (value -1) (closed-square-around 3))
+    (square (x 0) (y 2) (value -1) (closed-square-around 3))
 
-;     (square (x 1) (y 0) (value 0) (closed-square-around 5))
+    (square (x 1) (y 0) (value 0) (closed-square-around 5))
 
-;     (square (x 1) (y 1) (value 2) (closed-square-around 8))
+    (square (x 1) (y 1) (value 2) (closed-square-around 8))
 
-;     (square (x 1) (y 2) (value 2) (closed-square-around 5))
+    (square (x 1) (y 2) (value 2) (closed-square-around 5))
 
-;     (square (x 2) (y 0) (value 0) (closed-square-around 3))
+    (square (x 2) (y 0) (value 0) (closed-square-around 3))
 
-;     (square (x 2) (y 1) (value 1) (closed-square-around 5))
+    (square (x 2) (y 1) (value 1) (closed-square-around 5))
 
-;     (square (x 2) (y 2) (value -1) (closed-square-around 3))
-; )
+    (square (x 2) (y 2) (value -1) (closed-square-around 3))
+)
 
 ; (deffacts initial-dummy-3
 ;     (board (size 2) (remaining-bomb 0))
