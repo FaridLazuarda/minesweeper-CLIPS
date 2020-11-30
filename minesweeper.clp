@@ -77,10 +77,10 @@
 ;     (square (y 1) (x 2) (value -1) (closed-square-around 3) (is-open 0))
 ; )
 
-(deffunction is-one-line-3 (?c1 ?c2 ?c3)
-    (if (= ?c1 ?c2)
+(deffunction is-one-line-3 (?x1 ?x2 ?x3 ?y1 ?y2 ?y3)
+    (if (and (= ?x1 ?x2) (= ?y2 (+ ?y1 1)))
         then
-        (if (= ?c2 ?c3)
+        (if (and (= ?x2 ?x3) (= ?y3 (+ ?y2 1)))
             then (return 1)
         )
     )
@@ -96,13 +96,27 @@
 )
 
 (deffunction is-1-2-1 (?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6)
-    (if (= 1 (is-one-line-3 ?x1 ?x2 ?x3))
+    (if (= 1 (is-one-line-3 ?x1 ?x2 ?x3 ?y1 ?y2 ?y3))
         then
-        (if (and (or (= ?x1 (+ ?x4 1)) (= ?x1 (- ?x4 1))) (= ?y1 ?y4))
+        (if (and (= ?x1 (+ ?x4 1)) (= ?y1 ?y4))
             then
-            (if (and (or (= ?x2 (+ ?x5 1)) (= ?x2 (- ?x5 1))) (= ?y2 ?y5))
+            (if (and (= ?x2 (+ ?x5 1)) (= ?y2 ?y5))
                 then
-                (if (and (or (= ?x3 (+ ?x6 1)) (= ?x3 (- ?x6 1))) (= ?y3 ?y6))
+                (if (and (= ?x3 (+ ?x6 1)) (= ?y3 ?y6))
+                    then
+                    (return 1)
+                )
+            )
+        )
+    )
+
+    (if (= 1 (is-one-line-3 ?x1 ?x2 ?x3 ?y1 ?y2 ?y3))
+        then
+        (if (and (= ?x1 (- ?x4 1)) (= ?y1 ?y4))
+            then
+            (if (and (= ?x2 (- ?x5 1)) (= ?y2 ?y5))
+                then
+                (if (and (= ?x3 (- ?x6 1)) (= ?y3 ?y6))
                     then
                     (return 1)
                 )
@@ -117,18 +131,28 @@
     ?square1 <- (square (is-open 1) (x ?x1) (y ?y1) (value ?v1) (flagged-square-around ?f1))
     ?square2 <- (square (is-open 1) (x ?x2) (y ?y2) (value ?v2) (flagged-square-around ?f2))
     ?square3 <- (square (is-open 1) (x ?x3) (y ?y3) (value ?v3) (flagged-square-around ?f3))
+    ; Apakah mereka semua beda square
     (test (= 1 (different-square ?x1 ?y1 ?x2 ?y2)))
     (test (= 1 (different-square ?x1 ?y1 ?x3 ?y3)))
     (test (= 1 (different-square ?x2 ?y2 ?x3 ?y3)))
 
+    ; Apakah jumlah bom yang tersisa samadengan 121
     (test (= 1 (- ?v1 ?f1)))
     (test (= 2 (- ?v2 ?f2)))
     (test (= 1 (- ?v3 ?f3)))
+
+    ; Square yang mau dicek di depannya
     ?square4 <- (square (is-open 0) (x ?x4) (y ?y4) (is-flag 0))
     ?square5 <- (square (is-open 0) (x ?x5) (y ?y5) (is-flag 0))
     ?square6 <- (square (is-open 0) (x ?x6) (y ?y6) (is-flag 0))
     
-    (test (or (= 1 (is-1-2-1 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6)) (= 1 (is-1-2-1 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6))))
+    ; Apakah memenuhi fungsi 1-2-1 nya
+    (test 
+        (or 
+            ; 1-2-1 horizontal
+            (= 1 (is-1-2-1 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6)) 
+            ; 1-2-1 vertikal
+            (= 1 (is-1-2-1 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6))))
     
 
 =>
