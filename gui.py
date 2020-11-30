@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from clipspy import *
 from concurrent.futures import *
+import threading
 
 import sys
 import time
@@ -189,16 +190,17 @@ class Board(QMainWindow):
         self.update_status(STATUS_READY)
 
         self.show()
-        # executor = ThreadPoolExecutor()
-        # executor.submit(self.play)
-        self.play()
+        t1 = threading.Thread(target=self.play)
+        t1.start()
+        # self.play()
 
     def play(self):
         i = 0
         run = True
+        print('ke play nih')
         while run :
             facts = self.clips.run_one_step()
-            self.clips.environment.run()
+            # self.clips.environment.run()
             template_square = self.clips.environment.find_template('square')
             template_board = self.clips.environment.find_template('board')
 
@@ -214,13 +216,11 @@ class Board(QMainWindow):
                 elif fact.template == template_board:
                     if fact['remaining-bomb'] == 0:
                         run = False
-                        break
             
             # print(i)
             i += 1
-            
-            
-            # time.sleep(1)
+            # print(i)
+            time.sleep(0.1)
 
 
     def init_map(self):
