@@ -250,8 +250,8 @@
     
 
 =>
-    (modify ?square5 (is-flag 1))
     (modify ?square6 (is-flag 1))
+    (modify ?square7 (is-flag 1))
     (printout t "Used 1-2-2-1 rule" crlf)
 )
 
